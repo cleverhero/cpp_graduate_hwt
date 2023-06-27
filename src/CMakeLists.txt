@@ -1,0 +1,1 @@
+add_library(hwt_lib hwt.cpp hwt.h)
