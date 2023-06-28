@@ -1,22 +1,24 @@
 #include "hwt.h"
+#include <iostream>
 
 
 int main() {
 	hwt::OrderStatisticTree tree{};
-	tree.insert(8);
-	tree.insert(2);
-	tree.insert(-1);
 
-	hwt::OrderStatisticTree tree2{};
-	tree2 = tree;
+    while (true) {
+		char c;
+        int i;
+        std::cin >> c >> i;
+        if (std::cin.eof())
+            break;
 
-	std::cout <<
-		tree2.select(1) << " " <<
-		tree2.select(2);
-
-	std::cout << std::endl;
-
-	std::cout << tree2.rank(3) << std::endl;
+        if (c == 'k') 
+            tree.insert(i);
+		else if (c == 'n')
+			std::cout << tree.rank(i) << ' ';
+		else if (c == 'm')
+			std::cout << tree.select(i)  << ' ';
+    }
 
 	return 0;
 }
