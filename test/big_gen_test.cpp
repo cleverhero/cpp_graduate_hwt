@@ -16,7 +16,7 @@ TEST(HwtTests, Test_Big)
     testf.open(resources / "big_gen_test.in", std::ios::in);
     answerf.open(resources /"big_gen_test.out", std::ios::in);
 
-    if (!testf | !answerf) {
+    if (!testf || !answerf) {
         std::cout << "NO SUCH FILE!!" << std::endl;
         ASSERT_TRUE(false);
     }
@@ -34,7 +34,7 @@ TEST(HwtTests, Test_Big)
         if (c == 'k') {
             tree.insert(i);
         }
-        else if (c == 'n' or c == 'm') {
+        else if (c == 'n' || c == 'm') {
             int answer;
             answerf >> answer;
 
