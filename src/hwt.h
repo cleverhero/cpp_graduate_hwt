@@ -30,8 +30,8 @@ namespace hwt {
 			return node;
 		}
 
-		static Node_* deep_clone(Node_* rhs) {
-			Node_* rhs_node = rhs;
+		static Node_* deep_clone(const Node_* rhs) {
+			const Node_* rhs_node = rhs;
 			if (!rhs_node)
 				return nullptr;
 
