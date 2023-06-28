@@ -1,6 +1,3 @@
-#include <iostream>
-
-
 namespace hwt {
 	static int node_count = 0;
 
