@@ -42,7 +42,7 @@ TEST(HwtTests, Test_Big)
                 ASSERT_TRUE(false);
 
             if (c == 'm')
-                ASSERT_EQ(tree.select(i), answer);
+                ASSERT_EQ(tree.select(i).value(), answer);
             else
                 ASSERT_EQ(tree.rank(i), answer);
         }

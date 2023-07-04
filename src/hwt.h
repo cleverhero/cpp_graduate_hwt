@@ -1,3 +1,9 @@
+#include <optional>
+
+
+using std::optional, std::nullopt;
+
+
 namespace hwt {
 	static int node_count = 0;
 
@@ -170,28 +176,6 @@ namespace hwt {
 		return balance(curr_node);
 	}
 
-	int select(const Node_* root, const int k) {
-		if (k - root->lsubtree_size == 1)
-			return root->key;
-
-		if (k - root->lsubtree_size > 1)
-			return select(root->right, k - root->lsubtree_size - 1);
-
-		return select(root->left, k);
-	}
-
-	int rank(const Node_* root, const int k) {
-		if (!root)
-			return 0;
-
-		if (root->key == k)
-			return root->lsubtree_size;
-		else if (k > root->key)
-			return rank(root->right, k) + root->lsubtree_size + 1;
-		else
-			return rank(root->left, k);
-	}
-
 	class OrderStatisticTree {
 		Node_* root_;
 
@@ -216,12 +200,48 @@ namespace hwt {
 			root_ = hwt::insert(root_, key);
 		}
 
-		int select(const int k) const {
-			return hwt::select(root_, k);
+		optional<int> select(int k) const {
+			if (k < 1)
+				return nullopt;
+
+			auto curr_node = root_;
+			while (curr_node) {
+				int extra_k = k - curr_node->lsubtree_size;
+
+				if (extra_k > 1) {
+					curr_node = curr_node->right;
+					k = extra_k - 1;
+				}
+				else if (extra_k < 1)
+					curr_node = curr_node->left;
+				else
+					return curr_node->key;
+			}
+
+			return nullopt;
 		}
 
 		int rank(const int k) const {
-			return hwt::rank(root_, k);
+			if (!root_)
+				return 0;
+
+			auto curr_node = root_;
+			int result = 0;
+			while (curr_node) {
+				if (k > curr_node->key) {
+					result += curr_node->lsubtree_size + 1;
+					curr_node = curr_node->right; 
+				}
+				else if (k < curr_node->key) {
+					curr_node = curr_node->left;
+				}
+				else {
+					result += curr_node->lsubtree_size;
+					break;
+				}
+			}
+
+			return result;
 		}
 	};
 }

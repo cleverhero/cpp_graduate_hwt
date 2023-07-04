@@ -17,7 +17,7 @@ int main() {
 		else if (c == 'n')
 			std::cout << tree.rank(i) << ' ';
 		else if (c == 'm')
-			std::cout << tree.select(i)  << ' ';
+			std::cout << tree.select(i).value() << ' ';
     }
 
 	return 0;
