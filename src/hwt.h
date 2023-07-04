@@ -1,242 +1,276 @@
 #include <optional>
+#include <memory>
+#include <vector>
 
 
+using std::vector;
+using std::unique_ptr, std::make_unique;
 using std::optional, std::nullopt;
 
 
 namespace hwt {
+	// TODO
 	static int node_count = 0;
+	static int id_counter = 0;
 
 	struct Node_ {
-		Node_ *parent, *left, *right;
+		size_t id, tree_id;
+		optional<size_t> parent_id, left_id, right_id;
 		
 		int avl_h, lsubtree_size, rsubtree_size;
 		int key;
 
-		Node_(int key_):
-			parent(nullptr),
-			left(nullptr),
-			right(nullptr),
+		Node_(size_t tree_id, size_t id, int key_):
+			id(id),
+			tree_id(tree_id),
+
+			parent_id(nullopt),
+			left_id(nullopt),
+			right_id(nullopt),
+
 			avl_h(1),
 			lsubtree_size(0),
 			rsubtree_size(0),
+
 			key(key_)
 		{}
 
-		static Node_* shallow_clone(const Node_& rhs) {
-			node_count++;
-			Node_* node = new Node_{rhs.key};
-			node->avl_h = rhs.avl_h;
-			node->lsubtree_size = rhs.lsubtree_size;
-			node->rsubtree_size = rhs.rsubtree_size;
-
-			return node;
-		}
-
-		static Node_* deep_clone(const Node_* rhs) {
-			const Node_* rhs_node = rhs;
-			if (!rhs_node)
-				return nullptr;
-
-			Node_* this_node = Node_::shallow_clone(*rhs_node);
-			Node_* result = this_node;
-			while (rhs_node) {
-				if (rhs_node->left && !this_node->left) {
-					this_node->link_left( Node_::shallow_clone(*rhs_node->left) );
-					this_node = this_node->left;
-					rhs_node = rhs_node->left;
-				}
-				else if (rhs_node->right && !this_node->right) {
-					this_node->link_right( Node_::shallow_clone(*rhs_node->right) );
-					this_node = this_node->right;
-					rhs_node = rhs_node->right;
-				}
-				else {
-					this_node = this_node->parent;
-					rhs_node = rhs_node->parent;
-				}
-			}
-
-			return result;
-		}
-
-		static void deep_delete(Node_* rhs) {
-			Node_* rhs_node = rhs;
-			if (!rhs_node)
-				return;
-
-			while (rhs_node) {
-				if (rhs_node->left) {
-					rhs_node = rhs_node->left;
-				}
-				else if (rhs_node->right) {
-					rhs_node = rhs_node->right;
-				}
-				else {
-					Node_* parent = rhs_node->parent;
-
-					node_count--;
-					delete rhs_node;
-					rhs_node = parent;
-
-					if (parent && parent->left)
-						parent->left = nullptr;
-					else if (parent && parent->right)
-						parent->right = nullptr;
-				}
-			}
-		}
-
-		void link_left(Node_* rhs) {
-			left = rhs;
-			if (rhs) rhs->parent = this;
-		}
-
-		void link_right(Node_* rhs) {
-			right = rhs;
-			if (rhs) rhs->parent = this;
-		}
-
-		void unlink() {
-			this->parent = nullptr;
-		}
-
-		int bfactor() const {
-			auto r_avl_h = right ? right->avl_h : 0;
-			auto l_avl_h = left ? left->avl_h : 0;
-
-			return r_avl_h - l_avl_h;
-		}
-
-		void recalc() {
-			auto r_avl_h = right ? right->avl_h : 0;
-			auto l_avl_h = left ? left->avl_h : 0;
-			avl_h = (l_avl_h > r_avl_h ? l_avl_h : r_avl_h) + 1;
-
-			lsubtree_size = 0;
-			if (left)
-				lsubtree_size = left->lsubtree_size + left->rsubtree_size + 1;
-
-			rsubtree_size = 0;
-			if (right)
-				rsubtree_size = right->lsubtree_size + right->rsubtree_size + 1;
+		Node_(size_t tree_id, const Node_& rhs):
+			Node_(rhs)
+		{
+			tree_id = tree_id;
 		}
 	};
 
-	Node_* right_rotate(Node_* root) {
-		Node_* new_root = root->left;
-		new_root->unlink();
-		root->link_left(new_root->right);
-		new_root->link_right(root);
-
-		root->recalc();
-		new_root->recalc();
-		return new_root;
-	}
-
-	Node_* left_rotate(Node_* root) {
-		Node_* new_root = root->right;
-		new_root->unlink();
-		root->link_right(new_root->left);
-		new_root->link_left(root);
-		
-		root->recalc();
-		new_root->recalc();
-		return new_root;
-	}
-
-	Node_* balance(Node_* root) {
-		if (root->bfactor() == 2) {
-			if (root->right->bfactor() < 0)
-				root->link_right( right_rotate(root->right) );
-			return left_rotate(root);
-		}
-		if (root->bfactor() == -2) {
-			if (root->left->bfactor() > 0)
-				root->link_left( left_rotate(root->left) );
-			return right_rotate(root);
-		}
-
-		return root;
-	}
-
-	Node_* insert(Node_* curr_node, const int key) {
-		if (!curr_node) {
-			node_count++;
-			return new Node_{ key };
-		}
-
-		if (key > curr_node->key)
-			curr_node->link_right(insert(curr_node->right, key));
-		else
-			curr_node->link_left(insert(curr_node->left, key));
-
-		curr_node->recalc();
-		curr_node->unlink();
-		return balance(curr_node);
-	}
+	using unique_ptr_node = unique_ptr<Node_>;
+	using id_t = size_t;
+	using id_opt_t = optional<id_t>;
 
 	class OrderStatisticTree {
-		Node_* root_;
+		id_t id;
+		id_opt_t root_id;
+		vector<unique_ptr_node> nodes;
 
 	public:
-		OrderStatisticTree(): root_() {}
-
-		~OrderStatisticTree() {
-			Node_::deep_delete(this->root_);
-		}
-
-		OrderStatisticTree(const OrderStatisticTree& rhs):
-			root_(Node_::deep_clone(rhs.root_)) 
+		OrderStatisticTree():
+			id(id_counter++),
+			root_id(nullopt),
+			nodes()			
 		{}
 
+		~OrderStatisticTree() {
+			node_count -= nodes.size();
+		};
+
+		OrderStatisticTree(const OrderStatisticTree& rhs):
+			id(id_counter++),
+			root_id(rhs.root_id),
+			nodes(rhs.nodes.size())
+		{
+			for (int i = 0; i < rhs.nodes.size(); i++) {
+				nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
+				node_count++;
+			}
+		}
+
 		OrderStatisticTree& operator=(const OrderStatisticTree& rhs) {
-			Node_::deep_delete(this->root_);
-			this->root_ = Node_::deep_clone(rhs.root_);
+			// TODO
+			node_count -= nodes.size();
+			nodes = vector<unique_ptr_node>(rhs.nodes.size());
+
+			root_id = rhs.root_id;
+			for (int i = 0; i < rhs.nodes.size(); i++) {
+				nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
+				node_count++;
+			}
 			return *this;
 		}
 
+		void link_left(id_t parent_id, id_opt_t child_id) {
+			nodes[parent_id]->left_id = child_id;
+
+			if (child_id)
+				nodes[child_id.value()]->parent_id = parent_id;
+		}
+
+		void link_right(id_t parent_id, id_opt_t child_id) {
+			nodes[parent_id]->right_id = child_id;
+
+			if (child_id)
+				nodes[child_id.value()]->parent_id = parent_id;
+		}
+
+		void unlink_node(id_t node_id) {
+			auto node = *nodes[node_id];
+			if (!node.parent_id)
+				return;
+			auto parent = *nodes[node.parent_id.value()];
+
+			if (parent.left_id == node_id)
+				parent.left_id = nullopt;
+			else
+				parent.right_id = nullopt;
+
+			node.parent_id = nullopt;
+		}
+
+		id_opt_t get_left_id(id_t id) const {
+			return nodes[id]->left_id;
+		}
+
+		id_opt_t get_parent_id(id_t id) const {
+			return nodes[id]->parent_id;
+		}
+
+		id_opt_t get_right_id(id_t id) const {
+			return nodes[id]->right_id;
+		}
+
+		int get_subtree_avl_h(id_opt_t node_id) const {
+			if (!node_id)
+				return 0;
+
+			return nodes[node_id.value()]->avl_h;
+		}
+
+		int get_subtree_size(id_opt_t node_id) const {
+			if (!node_id)
+				return 0;
+
+			auto node = *nodes[node_id.value()];
+			return node.lsubtree_size + node.rsubtree_size + 1;
+		}
+
+		int get_subtree_bfactor(id_opt_t node_id) const {
+			if (!node_id)
+				return 0;
+
+			auto node = *nodes[node_id.value()];
+			return get_subtree_avl_h(node.right_id) - get_subtree_avl_h(node.left_id);
+		}
+
+		void recalc_node(id_t node_id) {
+			auto left_id = get_left_id(node_id);
+			auto right_id = get_right_id(node_id);
+
+			auto l_avl_h = get_subtree_avl_h(left_id);
+			auto r_avl_h = get_subtree_avl_h(right_id);
+			
+			nodes[node_id]->avl_h = (l_avl_h > r_avl_h ? l_avl_h : r_avl_h) + 1;
+			nodes[node_id]->lsubtree_size = get_subtree_size(left_id);
+			nodes[node_id]->rsubtree_size = get_subtree_size(right_id);
+		}
+
+		id_t right_rotate(id_t topnode_id) {
+			id_t new_topnode_id = get_left_id(topnode_id).value();
+
+			unlink_node(new_topnode_id);
+			link_left(topnode_id, get_right_id(new_topnode_id));
+			link_right(new_topnode_id, topnode_id);
+			
+			recalc_node(topnode_id);
+			recalc_node(new_topnode_id);
+			return new_topnode_id;
+		}
+
+		id_t left_rotate(id_t topnode_id) {
+			id_t new_topnode_id = get_right_id(topnode_id).value();
+
+			unlink_node(new_topnode_id);
+			link_right(topnode_id, get_left_id(new_topnode_id));
+			link_left(new_topnode_id, topnode_id);
+			
+			recalc_node(topnode_id);
+			recalc_node(new_topnode_id);
+			return new_topnode_id;
+		}
+
+		id_t balance_node(id_t node_id) {
+			auto left_id = get_left_id(node_id);
+			auto right_id = get_right_id(node_id);
+			auto bfactor = get_subtree_bfactor(node_id);
+
+			if (bfactor == 2) {
+				if (get_subtree_bfactor(right_id) < 0)
+					link_right(node_id, right_rotate(right_id.value()) );
+				return left_rotate(node_id);
+			}
+			if (bfactor == -2) {
+				if (get_subtree_bfactor(left_id) > 0)
+					link_left(node_id, left_rotate(left_id.value()) );
+				return right_rotate(node_id);
+			}
+			
+			return node_id;
+		}
+
+		id_t insert(const id_opt_t curr_node_id, const int key) {
+			if (!curr_node_id) {
+				nodes.push_back(
+					make_unique<Node_>(id, nodes.size(), key)
+				);
+				node_count++;
+				return nodes.size() - 1;
+			}
+
+			auto node_id = curr_node_id.value();
+			auto left_id = get_left_id(node_id);
+			auto right_id = get_right_id(node_id);
+
+			if (key > nodes[node_id]->key)
+				link_right(node_id, insert(right_id, key));
+			else
+				link_left(node_id, insert(left_id, key));
+
+			recalc_node(node_id);
+			unlink_node(node_id);
+			return balance_node(node_id);
+		}
+
 		void insert(const int key) {
-			root_ = hwt::insert(root_, key);
+			// NON-RECURSIVE?
+			root_id = insert(root_id, key);
 		}
 
 		optional<int> select(int k) const {
-			if (k < 1)
+			if (k < 1 || k > nodes.size())
 				return nullopt;
 
-			auto curr_node = root_;
-			while (curr_node) {
-				int extra_k = k - curr_node->lsubtree_size;
+			auto curr_node_id = root_id;
+			while (curr_node_id) {
+				auto node_id = curr_node_id.value();
+				int extra_k = k - nodes[node_id]->lsubtree_size;
 
 				if (extra_k > 1) {
-					curr_node = curr_node->right;
+					curr_node_id = get_right_id(node_id);
 					k = extra_k - 1;
 				}
 				else if (extra_k < 1)
-					curr_node = curr_node->left;
+					curr_node_id = get_left_id(node_id);
 				else
-					return curr_node->key;
+					return nodes[node_id]->key;
 			}
 
 			return nullopt;
 		}
 
 		int rank(const int k) const {
-			if (!root_)
+			if (!root_id)
 				return 0;
 
-			auto curr_node = root_;
+			auto curr_node_id = root_id;
 			int result = 0;
-			while (curr_node) {
-				if (k > curr_node->key) {
-					result += curr_node->lsubtree_size + 1;
-					curr_node = curr_node->right; 
+			while (curr_node_id) {
+				auto node_id = curr_node_id.value();
+				if (k > nodes[node_id]->key) {
+					result += nodes[node_id]->lsubtree_size + 1;
+					curr_node_id = get_right_id(node_id);
 				}
-				else if (k < curr_node->key) {
-					curr_node = curr_node->left;
+				else if (k < nodes[node_id]->key) {
+					curr_node_id = get_left_id(node_id);
 				}
 				else {
-					result += curr_node->lsubtree_size;
+					result += nodes[node_id]->lsubtree_size;
 					break;
 				}
 			}
