@@ -15,22 +15,16 @@ namespace hwt {
 
 	struct Node_ {
 		size_t id, tree_id;
-		optional<size_t> parent_id, left_id, right_id;
+		optional<size_t> parent_id = nullopt;
+		optional<size_t> left_id = nullopt;
+		optional<size_t> right_id = nullopt;
 		
-		int avl_h, lsubtree_size, rsubtree_size;
+		int avl_h = 1, lsubtree_size = 0, rsubtree_size = 0;
 		int key;
 
 		Node_(size_t tree_id, size_t id, int key_):
 			id(id),
 			tree_id(tree_id),
-
-			parent_id(nullopt),
-			left_id(nullopt),
-			right_id(nullopt),
-
-			avl_h(1),
-			lsubtree_size(0),
-			rsubtree_size(0),
 
 			key(key_)
 		{}
@@ -101,17 +95,16 @@ namespace hwt {
 		}
 
 		void unlink_node(id_t node_id) {
-			auto node = *nodes[node_id];
-			if (!node.parent_id)
+			auto parent_id = get_parent_id(node_id);
+			if (!parent_id)
 				return;
-			auto parent = *nodes[node.parent_id.value()];
 
-			if (parent.left_id == node_id)
-				parent.left_id = nullopt;
+			if (get_left_id(parent_id.value()) == node_id)
+				nodes[parent_id.value()]->left_id = nullopt;
 			else
-				parent.right_id = nullopt;
+				nodes[parent_id.value()]->right_id = nullopt;
 
-			node.parent_id = nullopt;
+			nodes[node_id]->parent_id = nullopt;
 		}
 
 		id_opt_t get_left_id(id_t id) const {
@@ -137,16 +130,16 @@ namespace hwt {
 			if (!node_id)
 				return 0;
 
-			auto node = *nodes[node_id.value()];
-			return node.lsubtree_size + node.rsubtree_size + 1;
+			return nodes[node_id.value()]->lsubtree_size + nodes[node_id.value()]->rsubtree_size + 1;
 		}
 
 		int get_subtree_bfactor(id_opt_t node_id) const {
 			if (!node_id)
 				return 0;
 
-			auto node = *nodes[node_id.value()];
-			return get_subtree_avl_h(node.right_id) - get_subtree_avl_h(node.left_id);
+			auto right_id = get_right_id(node_id.value());
+			auto left_id = get_left_id(node_id.value());
+			return get_subtree_avl_h(right_id) - get_subtree_avl_h(left_id);
 		}
 
 		void recalc_node(id_t node_id) {
