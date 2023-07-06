@@ -10,4 +10,5 @@ enable_testing()
 add_subdirectory(src)
 add_subdirectory(test)
 
-add_executable(hwt src/hwt.cpp src/hwt.h)
+add_executable(hwt src/cli.cpp)
+target_link_libraries(hwt hwt_lib)
