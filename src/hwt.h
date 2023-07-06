@@ -59,24 +59,35 @@ namespace hwt {
 		OrderStatisticTree(const OrderStatisticTree& rhs):
 			id(id_counter++),
 			root_id(rhs.root_id),
-			nodes(rhs.nodes.size())
+			nodes()
 		{
-			for (int i = 0; i < rhs.nodes.size(); i++) {
-				nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
-				node_count++;
-			}
+			vector<unique_ptr_node> tmp_nodes(rhs.nodes.size());
+			for (int i = 0; i < rhs.nodes.size(); i++)
+				tmp_nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
+
+			this->nodes.swap(tmp_nodes);
+			node_count += this->nodes.size();
 		}
 
 		OrderStatisticTree& operator=(const OrderStatisticTree& rhs) {
-			// TODO
-			node_count -= nodes.size();
-			nodes = vector<unique_ptr_node>(rhs.nodes.size());
+			OrderStatisticTree tmp(rhs);
 
+			std::swap(*this, tmp);
+			return *this;
+		}
+
+		OrderStatisticTree(OrderStatisticTree&& rhs):
+			id(rhs.id),
+			root_id(rhs.root_id)
+		{
+			this->nodes.swap(rhs.nodes);
+		}
+
+		OrderStatisticTree& operator=(OrderStatisticTree&& rhs) {
+			this->nodes.swap(rhs.nodes);
+
+			id = rhs.id;
 			root_id = rhs.root_id;
-			for (int i = 0; i < rhs.nodes.size(); i++) {
-				nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
-				node_count++;
-			}
 			return *this;
 		}
 
@@ -221,7 +232,6 @@ namespace hwt {
 		}
 
 		void insert(const int key) {
-			// NON-RECURSIVE?
 			root_id = insert(root_id, key);
 		}
 
