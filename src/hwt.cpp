@@ -10,15 +10,43 @@ namespace hwt {
         return node_count;
     };
 
+    Node_::Node_(id_t tree_id, id_t id, int key_):
+        id(id),
+        tree_id(tree_id),
+
+        key(key_)
+    {}
+
+    Node_::Node_(id_t tree_id, const Node_& rhs):
+        Node_(rhs)
+    {
+        tree_id = tree_id;
+    }
+
+    static void* Node_::operator new(std::size_t n) {
+    #ifdef TEST_EXCEPTION_SAFETY
+        static int allocation_counter = 0;
+        if (++allocation_counter % 15  == 0)
+            throw std::bad_alloc{};
+    #endif
+
+        void *p = malloc(n);
+        if (!p)
+            throw std::bad_alloc{};
+        node_count++;
+        return p;
+    }
+
+    static void Node_::operator delete(void * p) {
+        free(p);
+        node_count--;
+    }
+
     OrderStatisticTree::OrderStatisticTree():
         id(id_counter++),
         root_id(nullopt),
         nodes()
     {}
-
-    OrderStatisticTree::~OrderStatisticTree() {
-        node_count -= nodes.size();
-    };
 
     OrderStatisticTree::OrderStatisticTree(const OrderStatisticTree& rhs):
         id(id_counter++),
@@ -30,7 +58,6 @@ namespace hwt {
             tmp_nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
 
         this->nodes.swap(tmp_nodes);
-        node_count += this->nodes.size();
     }
 
     OrderStatisticTree& OrderStatisticTree::operator=(const OrderStatisticTree& rhs) {
@@ -177,7 +204,6 @@ namespace hwt {
             nodes.push_back(
                 make_unique<Node_>(id, nodes.size(), key)
             );
-            node_count++;
             return nodes.size() - 1;
         }
 

@@ -12,41 +12,34 @@ namespace hwt {
 	using id_t = size_t;
 	using id_opt_t = optional<id_t>;
 
+	int get_node_count();
+
 	struct Node_ {
 		id_t id, tree_id;
 		optional<id_t> parent_id = nullopt;
 		optional<id_t> left_id = nullopt;
 		optional<id_t> right_id = nullopt;
-		
 		int avl_h = 1, lsubtree_size = 0, rsubtree_size = 0;
 		int key;
 
-		Node_(id_t tree_id, id_t id, int key_):
-			id(id),
-			tree_id(tree_id),
+		Node_(id_t tree_id, id_t id, int key_);
+		Node_(id_t tree_id, const Node_& rhs);
+		~Node_() = default;
 
-			key(key_)
-		{}
-
-		Node_(id_t tree_id, const Node_& rhs):
-			Node_(rhs)
-		{
-			tree_id = tree_id;
-		}
+		static void* operator new(std::size_t n);
+		static void operator delete(void* p);
 	};
 
 	using unique_ptr_node = unique_ptr<Node_>;
 
-	int get_node_count();
-
 	class OrderStatisticTree {
+	public:
 		id_t id;
 		id_opt_t root_id;
 		vector<unique_ptr_node> nodes;
 
-	public:
 		OrderStatisticTree();
-		~OrderStatisticTree();
+		~OrderStatisticTree() = default;
 
 		OrderStatisticTree(const OrderStatisticTree& rhs);
 		OrderStatisticTree& operator=(const OrderStatisticTree& rhs);
