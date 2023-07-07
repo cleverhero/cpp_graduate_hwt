@@ -4,7 +4,7 @@
 
 namespace hwt {
     static int node_count = 0;
-	static int id_counter = 0;
+    static int id_counter = 0;
 
     int get_node_count() {
         return node_count;
@@ -23,7 +23,7 @@ namespace hwt {
         tree_id = tree_id;
     }
 
-    static void* Node_::operator new(std::size_t n) {
+    void* Node_::operator new(std::size_t n) {
     #ifdef TEST_EXCEPTION_SAFETY
         static int allocation_counter = 0;
         if (++allocation_counter % 15  == 0)
@@ -37,7 +37,7 @@ namespace hwt {
         return p;
     }
 
-    static void Node_::operator delete(void * p) {
+    void Node_::operator delete(void * p) {
         free(p);
         node_count--;
     }

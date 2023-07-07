@@ -17,8 +17,6 @@
 
 #### Running the CLI Executable
 
-Without arguments, it prints out its usage:
-
 ```bash
 ❯ ./hwt k 4 k 2 k 1 k 5 k 3 m 3 m 4 n 5 n 2 n 1
 ```

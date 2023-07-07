@@ -3,10 +3,10 @@
 
 
 int main() {
-	hwt::OrderStatisticTree tree{};
+    hwt::OrderStatisticTree tree{};
 
     while (true) {
-		char c;
+        char c;
         int i;
         std::cin >> c >> i;
         if (std::cin.eof())
@@ -14,11 +14,11 @@ int main() {
 
         if (c == 'k') 
             tree.insert(i);
-		else if (c == 'n')
-			std::cout << tree.rank(i) << ' ';
-		else if (c == 'm')
-			std::cout << tree.select(i).value() << ' ';
+        else if (c == 'n')
+            std::cout << tree.rank(i) << ' ';
+        else if (c == 'm')
+            std::cout << tree.select(i).value() << ' ';
     }
 
-	return 0;
+    return 0;
 }
