@@ -30,8 +30,13 @@ add_executable(big_test big_gen_test.cpp)
 target_include_directories(big_test PUBLIC "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(big_test PRIVATE GTest::GTest hwt_lib)
 
+add_executable(es_test exception_safety_test.cpp)
+target_include_directories(es_test PUBLIC "${CMAKE_CURRENT_BINARY_DIR}")
+target_link_libraries(es_test PRIVATE GTest::GTest hwt_lib_test)
+
 
 add_test(easy_test easy_test)
 add_test(ml_test ml_test)
 add_test(little_test little_test)
 add_test(big_test big_test)
+add_test(es_test es_test)
