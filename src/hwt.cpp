@@ -100,10 +100,6 @@ namespace hwt {
         return balance_node(node_id);
     }
 
-    void OrderStatisticTree::insert(const int key) {
-        root_id = insert(root_id, key);
-    }
-
     optional<int> OrderStatisticTree::select(int k) const {
         if (k < 1 || k > nodes.size())
             return nullopt;

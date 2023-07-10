@@ -61,14 +61,14 @@ namespace hwt {
             return *this;
         }
 
-        OrderStatisticTree(OrderStatisticTree&& rhs):
+        OrderStatisticTree(OrderStatisticTree&& rhs) noexcept:
             id(rhs.id),
             root_id(rhs.root_id)
         {
-            this->nodes.swap(rhs.nodes);
+            nodes.swap(rhs.nodes);
         }
 
-        OrderStatisticTree& operator=(OrderStatisticTree&& rhs) {
+        OrderStatisticTree& operator=(OrderStatisticTree&& rhs) noexcept {
             this->nodes.swap(rhs.nodes);
 
             id = rhs.id;
@@ -76,7 +76,9 @@ namespace hwt {
             return *this;
         }
 
-        void insert(const int key);
+        void insert(const int key) {
+            root_id = insert(root_id, key); 
+        }
         optional<int> select(int k) const;
         int rank(const int k) const;
 
