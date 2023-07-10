@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/hwt.h"
+#include "hwt.h"
 
 
 TEST(HwtTests, Test_Rank1)

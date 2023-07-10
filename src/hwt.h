@@ -12,8 +12,6 @@ namespace hwt {
     using id_t = size_t;
     using id_opt_t = optional<id_t>;
 
-    int get_node_count();
-
     struct Node_ {
         id_t id, tree_id;
         id_opt_t parent_id = nullopt;
@@ -26,8 +24,10 @@ namespace hwt {
         Node_(id_t tree_id, const Node_& rhs);
         ~Node_() = default;
 
+    #ifdef TEST_MEMORY
         static void* operator new(std::size_t n);
         static void operator delete(void* p);
+    #endif
     };
 
     using unique_ptr_node = unique_ptr<Node_>;

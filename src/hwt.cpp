@@ -3,12 +3,7 @@
 
 
 namespace hwt {
-    static int node_count = 0;
     static int id_counter = 0;
-
-    int get_node_count() {
-        return node_count;
-    };
 
     Node_::Node_(id_t tree_id, id_t id, int key_):
         id(id),
@@ -21,25 +16,6 @@ namespace hwt {
         Node_(rhs)
     {
         tree_id = tree_id;
-    }
-
-    void* Node_::operator new(std::size_t n) {
-    #ifdef TEST_EXCEPTION_SAFETY
-        static int allocation_counter = 0;
-        if (++allocation_counter % 15  == 0)
-            throw std::bad_alloc{};
-    #endif
-
-        void *p = malloc(n);
-        if (!p)
-            throw std::bad_alloc{};
-        node_count++;
-        return p;
-    }
-
-    void Node_::operator delete(void * p) {
-        free(p);
-        node_count--;
     }
 
     OrderStatisticTree::OrderStatisticTree():

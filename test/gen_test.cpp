@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <filesystem>
-#include "../src/hwt.h"
+
+#include "hwt.h"
 #include "config.h"
 
 
