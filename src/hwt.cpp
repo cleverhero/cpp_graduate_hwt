@@ -5,19 +5,6 @@
 namespace hwt {
     static int id_counter = 0;
 
-    Node_::Node_(id_t tree_id, id_t id, int key_):
-        id(id),
-        tree_id(tree_id),
-
-        key(key_)
-    {}
-
-    Node_::Node_(id_t tree_id, const Node_& rhs):
-        Node_(rhs)
-    {
-        tree_id = tree_id;
-    }
-
     OrderStatisticTree::OrderStatisticTree():
         id(id_counter++),
         root_id(nullopt),
@@ -34,90 +21,6 @@ namespace hwt {
             tmp_nodes[i] = make_unique<Node_>(id, *rhs.nodes[i]);
 
         this->nodes.swap(tmp_nodes);
-    }
-
-    OrderStatisticTree& OrderStatisticTree::operator=(const OrderStatisticTree& rhs) {
-        OrderStatisticTree tmp(rhs);
-
-        std::swap(*this, tmp);
-        return *this;
-    }
-
-    OrderStatisticTree::OrderStatisticTree(OrderStatisticTree&& rhs):
-        id(rhs.id),
-        root_id(rhs.root_id)
-    {
-        this->nodes.swap(rhs.nodes);
-    }
-
-    OrderStatisticTree& OrderStatisticTree::operator=(OrderStatisticTree&& rhs) {
-        this->nodes.swap(rhs.nodes);
-
-        id = rhs.id;
-        root_id = rhs.root_id;
-        return *this;
-    }
-
-    void OrderStatisticTree::link_left(id_t parent_id, id_opt_t child_id) {
-        nodes[parent_id]->left_id = child_id;
-
-        if (child_id)
-            nodes[child_id.value()]->parent_id = parent_id;
-    }
-
-    void OrderStatisticTree::link_right(id_t parent_id, id_opt_t child_id) {
-        nodes[parent_id]->right_id = child_id;
-
-        if (child_id)
-            nodes[child_id.value()]->parent_id = parent_id;
-    }
-
-    void OrderStatisticTree::unlink_node(id_t node_id) {
-        auto parent_id = get_parent_id(node_id);
-        if (!parent_id)
-            return;
-
-        if (get_left_id(parent_id.value()) == node_id)
-            nodes[parent_id.value()]->left_id = nullopt;
-        else
-            nodes[parent_id.value()]->right_id = nullopt;
-
-        nodes[node_id]->parent_id = nullopt;
-    }
-
-    id_opt_t OrderStatisticTree::get_left_id(id_t id) const {
-        return nodes[id]->left_id;
-    }
-
-    id_opt_t OrderStatisticTree::get_parent_id(id_t id) const {
-        return nodes[id]->parent_id;
-    }
-
-    id_opt_t OrderStatisticTree::get_right_id(id_t id) const {
-        return nodes[id]->right_id;
-    }
-
-    int OrderStatisticTree::get_subtree_avl_h(id_opt_t node_id) const {
-        if (!node_id)
-            return 0;
-
-        return nodes[node_id.value()]->avl_h;
-    }
-
-    int OrderStatisticTree::get_subtree_size(id_opt_t node_id) const {
-        if (!node_id)
-            return 0;
-
-        return nodes[node_id.value()]->lsubtree_size + nodes[node_id.value()]->rsubtree_size + 1;
-    }
-
-    int OrderStatisticTree::get_subtree_bfactor(id_opt_t node_id) const {
-        if (!node_id)
-            return 0;
-
-        auto right_id = get_right_id(node_id.value());
-        auto left_id = get_left_id(node_id.value());
-        return get_subtree_avl_h(right_id) - get_subtree_avl_h(left_id);
     }
 
     void OrderStatisticTree::recalc_node(id_t node_id) {
