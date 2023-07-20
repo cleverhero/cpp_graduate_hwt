@@ -1,4 +1,7 @@
-#include "hwt.h"
+#include "nodes.h"
+#include "binary_search_tree.h"
+#include "avl_tree.h"
+#include "order_statistic_tree.h"
 
 
 namespace hwt {

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "hwt.h"
 #include <iostream>
+#include "order_statistic_tree.h"
 
 
 static int allocation_counter = 0;

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "hwt.h"
+#include "order_statistic_tree.h"
 
 
 TEST(HwtTests, Test_Rank1)

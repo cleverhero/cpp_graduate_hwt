@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "hwt.h"
+#include "order_statistic_tree.h"
 
 
 static int node_count = 0;
