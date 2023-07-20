@@ -4,8 +4,10 @@
 
 static int node_count = 0;
 
+using hwt::metadata::Full;
 
-void* hwt::Node_::operator new(std::size_t n) {
+template<>
+void* hwt::Node_<Full>::operator new(std::size_t n) {
     void *p = malloc(n);
     if (!p)
         throw std::bad_alloc{};
@@ -13,8 +15,8 @@ void* hwt::Node_::operator new(std::size_t n) {
     return p;
 }
 
-
-void hwt::Node_::operator delete(void * p) {
+template<>
+void hwt::Node_<Full>::operator delete(void * p) {
     free(p);
     node_count--;
 }

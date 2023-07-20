@@ -6,8 +6,10 @@
 static int allocation_counter = 0;
 static int node_count = 0;
 
+using hwt::metadata::Full;
 
-void* hwt::Node_::operator new(std::size_t n) {
+template<>
+void* hwt::Node_<Full>::operator new(std::size_t n) {
     if (++allocation_counter % 15  == 0)
         throw std::bad_alloc{};
 
@@ -18,7 +20,8 @@ void* hwt::Node_::operator new(std::size_t n) {
     return p;
 }
 
-void hwt::Node_::operator delete(void * p) {
+template<>
+void hwt::Node_<Full>::operator delete(void * p) {
     free(p);
     node_count--;
 }
@@ -45,9 +48,9 @@ TEST(HwtTests, Test_Copy_Constructor)
     for (int i = 0; i < 10; i++)       
         tree.insert(i);
 
-    hwt::OrderStatisticTree* p_tree = nullptr;
+    hwt::OrderStatisticTree<>* p_tree = nullptr;
     try {
-        p_tree = new hwt::OrderStatisticTree{tree};
+        p_tree = new hwt::OrderStatisticTree<>{tree};
     }
     catch (const std::bad_alloc& exc) {}
 
@@ -70,7 +73,7 @@ TEST(HwtTests, Test_Copy_Assignment)
     catch (const std::bad_alloc& exc) {}
 
     ASSERT_EQ(node_count, 10);
-    ASSERT_EQ(cp_tree.nodes.size(), 0);
+    ASSERT_EQ(cp_tree.nodes_count(), 0);
 }
 
 
