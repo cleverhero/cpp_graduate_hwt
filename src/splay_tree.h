@@ -13,9 +13,10 @@ using std::vector;
 
 namespace hwt
 {
-    template <
+    template<
         typename MT = metadata::Empty,
-        typename = typename MT::base_trait>
+        typename = typename MT::base_trait
+    >
     class SplayTree : public BinarySearchTree<MT>
     {
     protected:

@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <filesystem>
-
 #include "order_statistic_tree.h"
 #include "config.h"
 
@@ -14,8 +13,8 @@ TEST(HwtTests, Test_Big)
 {
     path resources(RESOURCES_PATH);
     std::fstream testf, answerf;
-    testf.open(resources / "gen_test.in", std::ios::in);
-    answerf.open(resources /"gen_test.out", std::ios::in);
+    testf.open(resources / "rank_select_test.in", std::ios::in);
+    answerf.open(resources /"rank_select_test.out", std::ios::in);
 
     if (!testf || !answerf) {
         std::cout << "NO SUCH FILE!!" << std::endl;

@@ -25,7 +25,7 @@ def generate(insert_c, select_c, rank_c, shuffle=False):
 
 
 def make_test(test_name, insert_c, select_c, rank_c, shuffle):
-    test_path = f'./res/{test_name}'
+    test_path = f'./{test_name}'
     fi, fo = open(test_path + '.in', 'w+'), open(test_path + '.out', 'w+')
     input, output = generate(insert_c, select_c, rank_c, shuffle)
     print(input, file=fi)
@@ -33,5 +33,4 @@ def make_test(test_name, insert_c, select_c, rank_c, shuffle):
 
 
 if __name__ == '__main__':
-    make_test('test1', 5, 2, 3, True)
-    make_test('test2', 500_000, 2_000, 300, True)
+    make_test('rank_select_test', 500_000, 2_000, 300, True)
