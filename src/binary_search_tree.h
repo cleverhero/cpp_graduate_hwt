@@ -3,6 +3,7 @@
 #include <optional>
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include "nodes.h"
 
@@ -10,7 +11,6 @@
 using std::vector;
 using std::unique_ptr, std::make_unique;
 using std::optional, std::nullopt;
-
 
 namespace hwt {
     template<
@@ -73,25 +73,59 @@ namespace hwt {
             return *this;
         }
 
-        void insert(const int key) { root_id = insert(root_id, key); }
+        void insert(const int key) { set_root( insert(root_id, key) ); }
 
-        int nodes_count() {return nodes.size(); }
+        int nodes_count() { return nodes.size(); }
 
-        // bool find(const int key) const;
+        virtual bool find(const int key) const {
+            if (!this->root_id)
+                return false;
+
+            auto curr_node_id = this->root_id;
+            while (curr_node_id) {
+                if (key > this->nodes[curr_node_id.value()]->key)
+                    curr_node_id = this->get_right_id(curr_node_id.value());
+                else if (key < this->nodes[curr_node_id.value()]->key)
+                    curr_node_id = this->get_left_id(curr_node_id.value());
+                else
+                    return true;
+            }
+
+            return false;
+        }
+
+        void print() { print(root_id); }
 
     protected:
-        void link_left(id_t parent_id, id_opt_t child_id) {
-            nodes[parent_id]->left_id = child_id;
+        void set_root(id_t node_id) {
+            unlink_node(node_id);
+            root_id = node_id;
+        }
 
-            if (child_id)
+        void link_left(id_t parent_id, id_opt_t child_id) {
+            if (nodes[parent_id]->left_id == child_id)
+                return update_node(parent_id);
+
+            if (child_id) {
+                unlink_node(child_id.value());
                 nodes[child_id.value()]->parent_id = parent_id;
+            }
+
+            nodes[parent_id]->left_id = child_id;
+            update_node(parent_id);
         }
 
         void link_right(id_t parent_id, id_opt_t child_id) {
-            nodes[parent_id]->right_id = child_id;
+            if (nodes[parent_id]->right_id == child_id)
+                return update_node(parent_id);
 
-            if (child_id)
+            if (child_id) {
+                unlink_node(child_id.value());
                 nodes[child_id.value()]->parent_id = parent_id;
+            }
+
+            nodes[parent_id]->right_id = child_id;
+            update_node(parent_id);
         }
 
         void unlink_node(id_t node_id) {
@@ -99,10 +133,14 @@ namespace hwt {
             if (!parent_id)
                 return;
 
-            if (get_left_id(parent_id.value()) == node_id)
+            if (get_left_id(parent_id.value()) == node_id) {
                 nodes[parent_id.value()]->left_id = nullopt;
-            else
+                update_node(parent_id.value());
+            }
+            if (get_right_id(parent_id.value()) == node_id) {
                 nodes[parent_id.value()]->right_id = nullopt;
+                update_node(parent_id.value());
+            }
 
             nodes[node_id]->parent_id = nullopt;
         }
@@ -117,7 +155,7 @@ namespace hwt {
 
             return nodes[id.value()]->metadata;
         }
-        
+
         void update_node(id_t node_id) {
             auto left_id = get_left_id(node_id);
             auto right_id = get_right_id(node_id);
@@ -130,24 +168,18 @@ namespace hwt {
         id_t right_rotate(id_t topnode_id) {
             id_t new_topnode_id = get_left_id(topnode_id).value();
 
-            unlink_node(new_topnode_id);
             link_left(topnode_id, get_right_id(new_topnode_id));
             link_right(new_topnode_id, topnode_id);
-            
-            update_node(topnode_id);
-            update_node(new_topnode_id);
+
             return new_topnode_id;
         };
 
         id_t left_rotate(id_t topnode_id) {
             id_t new_topnode_id = get_right_id(topnode_id).value();
 
-            unlink_node(new_topnode_id);
             link_right(topnode_id, get_left_id(new_topnode_id));
             link_left(new_topnode_id, topnode_id);
-            
-            update_node(topnode_id);
-            update_node(new_topnode_id);
+
             return new_topnode_id;
         };
 
@@ -168,9 +200,23 @@ namespace hwt {
             else
                 link_left(node_id, insert(left_id, key));
 
-            update_node(node_id);
-            unlink_node(node_id);
             return node_id;
         };
+
+        void print(id_opt_t node_id) {
+            if (node_id) {
+                auto left_id = nodes[node_id.value()]->left_id;
+                auto right_id = nodes[node_id.value()]->right_id;
+
+                print(left_id);
+                std::cout << "key: " << nodes[node_id.value()]->key;
+                if (left_id)
+                    std::cout << " | left child: " << nodes[left_id.value()]->key;
+                if (right_id)
+                    std::cout << " | right child: " << nodes[right_id.value()]->key;
+                std::cout << std::endl;
+                print(right_id);
+            }
+        }
     };
 }
