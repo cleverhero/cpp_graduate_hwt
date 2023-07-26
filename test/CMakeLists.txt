@@ -28,6 +28,10 @@ add_executable(ml_test ${base_tests}/memory_leak_test.cpp)
 target_include_directories(ml_test PUBLIC ${HEADERS_DIR})
 target_link_libraries(ml_test PRIVATE GTest::GTest hwt_lib_test)
 
+add_executable(templates_test ${base_tests}/templates_test.cpp)
+target_include_directories(templates_test PUBLIC ${HEADERS_DIR})
+target_link_libraries(templates_test PRIVATE GTest::GTest hwt_lib)
+
 add_executable(easy_test ${ost_tests}/easy_test.cpp)
 target_include_directories(easy_test PUBLIC ${HEADERS_DIR})
 target_link_libraries(easy_test PRIVATE GTest::GTest hwt_lib)
@@ -36,7 +40,9 @@ add_executable(big_test ${ost_tests}/big_gen_test.cpp)
 target_include_directories(big_test PUBLIC ${CONFIG_DIR} ${HEADERS_DIR})
 target_link_libraries(big_test PRIVATE GTest::GTest hwt_lib)
 
-add_test(easy_test easy_test)
 add_test(ml_test ml_test)
-add_test(big_test big_test)
 add_test(es_test es_test)
+add_test(templates_test templates_test)
+
+add_test(easy_test easy_test)
+add_test(big_test big_test)
