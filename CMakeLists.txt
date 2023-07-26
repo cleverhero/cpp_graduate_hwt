@@ -9,6 +9,10 @@ enable_testing()
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(banchmarks)
 
-add_executable(hwt src/cli.cpp)
-target_link_libraries(hwt hwt_lib)
+add_executable(order_statictic src/order_statictic.cpp)
+target_link_libraries(order_statictic hwt_lib)
+
+add_executable(range_find src/range_find.cpp)
+target_link_libraries(range_find hwt_lib)

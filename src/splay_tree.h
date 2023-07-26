@@ -23,7 +23,7 @@ namespace hwt
         using BST = BinarySearchTree<MT>;
 
     public:
-        bool find(int key) {
+        bool find(int key) override {
             if (!this->root_id)
                 return false;
 

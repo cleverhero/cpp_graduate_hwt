@@ -77,7 +77,7 @@ namespace hwt {
 
         int nodes_count() { return nodes.size(); }
 
-        virtual bool find(const int key) const {
+        virtual bool find(const int key) {
             if (!this->root_id)
                 return false;
 
@@ -94,7 +94,15 @@ namespace hwt {
             return false;
         }
 
-        void print() { print(root_id); }
+        virtual int range_find(const int l, const int r) {
+            int counter = 0;
+            for (int i = l; i < r; i++)
+                counter += find(i);
+
+            return counter;
+        }
+
+        void print() const { print(root_id); }
 
     protected:
         void set_root(id_t node_id) {
@@ -203,7 +211,7 @@ namespace hwt {
             return node_id;
         };
 
-        void print(id_opt_t node_id) {
+        void print(id_opt_t node_id) const {
             if (node_id) {
                 auto left_id = nodes[node_id.value()]->left_id;
                 auto right_id = nodes[node_id.value()]->right_id;
