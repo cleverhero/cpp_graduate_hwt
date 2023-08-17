@@ -48,7 +48,7 @@ namespace hwt {
             for (int i = 0; i < rhs.nodes.size(); i++)
                 tmp_nodes[i] = make_unique<NodeType>(id, *rhs.nodes[i]);
 
-            this->nodes.swap(tmp_nodes);
+            nodes.swap(tmp_nodes);
         }
 
         BST& operator=(const BST& rhs) {
