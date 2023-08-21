@@ -43,38 +43,6 @@ namespace hwt
             id_opt_t tail;
         };
 
-        id_t pure_left_rotate(id_t topnode_id) noexcept {
-            id_t new_topnode_id = get_right_id(topnode_id).value();
-
-            auto rl_id = get_left_id(new_topnode_id);
-            nodes[topnode_id]->right_id = rl_id;
-            if (rl_id)
-                nodes[rl_id.value()]->parent_id = topnode_id;
-
-            nodes[new_topnode_id]->left_id = topnode_id;
-            nodes[topnode_id]->parent_id = new_topnode_id;
-
-            update_node(topnode_id);
-            update_node(new_topnode_id);
-            return new_topnode_id;
-        };
-
-        id_t pure_right_rotate(id_t topnode_id) noexcept {
-            id_t new_topnode_id = get_left_id(topnode_id).value();
-
-            auto lr_id = get_right_id(new_topnode_id);
-            nodes[topnode_id]->left_id = lr_id;
-            if (lr_id)
-                nodes[lr_id.value()]->parent_id = topnode_id;
-
-            nodes[new_topnode_id]->right_id = topnode_id;
-            nodes[topnode_id]->parent_id = new_topnode_id;
-
-            update_node(topnode_id);
-            update_node(new_topnode_id);
-            return new_topnode_id;
-        };
-
         void to_right_tree(id_opt_t node_id, TmpTree& right) noexcept {
             if (!right.head)
                 right.head = node_id;
@@ -156,7 +124,7 @@ namespace hwt
                         break;
 
                     if (key < nodes[left_id.value()]->key)
-                        curr_root_id = pure_right_rotate(curr_root_id);
+                        curr_root_id = right_rotate(curr_root_id);
                     curr_root_id = break_right(curr_root_id, tmp_right);
                 }
                 else if (key > root_key) {
@@ -165,7 +133,7 @@ namespace hwt
                         break;
 
                     if (key > nodes[right_id.value()]->key)
-                        curr_root_id = pure_left_rotate(curr_root_id);
+                        curr_root_id = left_rotate(curr_root_id);
                     curr_root_id = break_left(curr_root_id, tmp_left);
                 }
                 else
