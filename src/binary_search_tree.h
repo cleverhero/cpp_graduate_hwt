@@ -159,14 +159,14 @@ namespace hwt {
         id_opt_t get_parent_id(id_t id) const { return nodes[id]->parent_id; }
         id_opt_t get_right_id(id_t id) const { return nodes[id]->right_id; }
 
-        const MT& get_metadata(id_opt_t id) const {
+        const MT& get_metadata(id_opt_t id) const noexcept {
             if (!id)
                 return after_leaf;
 
             return nodes[id.value()]->metadata;
         }
 
-        void update_node(id_t node_id) {
+        void update_node(id_t node_id) noexcept {
             auto left_id = get_left_id(node_id);
             auto right_id = get_right_id(node_id);
             nodes[node_id]->metadata.update(

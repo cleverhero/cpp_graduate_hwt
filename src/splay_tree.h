@@ -113,12 +113,12 @@ namespace hwt
             return (nodes[root_id.value()]->key == key);
         }
 
-        void splay(int key) noexcept {
+        void splay(const int key) noexcept {
             TmpTree tmp_left, tmp_right;
 
             while(true) {
                 id_t curr_root_id = root_id.value();
-                auto root_key = nodes[curr_root_id]->key;
+                const int root_key = nodes[curr_root_id]->key;
 
                 if (key < root_key) {
                     auto left_id = get_left_id(curr_root_id);

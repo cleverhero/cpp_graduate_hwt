@@ -41,7 +41,7 @@ namespace hwt {
             typedef BaseTrait metadata_trait;
 
             static Empty AfterLeaf() { return Empty{}; }
-            void update(const Empty left, const Empty right) {};
+            void update(const Empty left, const Empty right) noexcept {};
         };
 
         struct Avl_h {
@@ -50,7 +50,7 @@ namespace hwt {
 
             static Avl_h AfterLeaf() { return Avl_h{0}; }
 
-            void update(const Avl_h& left, const Avl_h& right) {
+            void update(const Avl_h& left, const Avl_h& right) noexcept {
                 avl_h = (left.avl_h > right.avl_h ? left.avl_h : right.avl_h) + 1;
             };
         };
@@ -61,7 +61,7 @@ namespace hwt {
 
             static Size AfterLeaf() { return Size{0}; }
 
-            void update(const Size& left, const Size& right) {
+            void update(const Size& left, const Size& right) noexcept {
                 subtree_size = left.subtree_size + right.subtree_size + 1;
             };
         };
@@ -73,7 +73,7 @@ namespace hwt {
 
             static Full AfterLeaf() { return Full{0, 0}; }
 
-            void update(const Full& left, const Full& right) {
+            void update(const Full& left, const Full& right) noexcept {
                 avl_h = (left.avl_h > right.avl_h ? left.avl_h : right.avl_h) + 1;
                 subtree_size = left.subtree_size + right.subtree_size + 1;
             };
