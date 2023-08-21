@@ -15,7 +15,9 @@ using std::optional, std::nullopt;
 namespace hwt {
     template<
         typename MT = metadata::Avl_h,
-        typename = typename MT::avl_trait
+        typename = std::enable_if_t<
+            std::is_base_of_v<metadata::AVLTrait, typename MT::metadata_trait>
+        >
     >
     class AVLTree: public BinarySearchTree<MT> {
     protected:

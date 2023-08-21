@@ -15,7 +15,9 @@ namespace hwt
 {
     template<
         typename MT = metadata::Empty,
-        typename = typename MT::base_trait
+        typename = std::enable_if_t<
+            std::is_base_of_v<metadata::BaseTrait, typename MT::metadata_trait>
+        >
     >
     class SplayTree : public BinarySearchTree<MT> {
     protected:

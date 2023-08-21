@@ -19,7 +19,9 @@ namespace hwt {
         template<typename MT>
         typename TreeType = AVLTree,
         typename MT = metadata::Full,
-        typename = typename MT::size_trait
+        typename = std::enable_if_t<
+            std::is_base_of_v<metadata::SizeTrait, typename MT::metadata_trait>
+        >
     >
     class OrderStatisticTree: public TreeType<MT> {
     protected:

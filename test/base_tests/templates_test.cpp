@@ -24,7 +24,12 @@ TEST(HwtTests, Test_Templates)
     handle( hwt::SplayTree{} );
 
     handle( hwt::OrderStatisticTree{} );
-    handle( hwt::OrderStatisticTree<hwt::SplayTree>{} );
+    handle(
+        hwt::OrderStatisticTree<
+            hwt::SplayTree,
+            hwt::metadata::Size
+        >{}
+    );
     handle( 
         hwt::OrderStatisticTree<
             hwt::BinarySearchTree,

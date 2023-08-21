@@ -16,17 +16,20 @@ namespace hwt {
     using id_opt_t = optional<id_t>;
 
     namespace metadata {
+        struct BaseTrait {};
+        struct AVLTrait: BaseTrait {};
+        struct SizeTrait: BaseTrait {};
+        struct AVLSizeTrait: AVLTrait, SizeTrait {};
+
         struct Empty {
-            typedef std::integral_constant<int, 1> base_trait;
+            typedef BaseTrait metadata_trait;
 
             static Empty AfterLeaf() { return Empty{}; }
             void update(const Empty left, const Empty right) {};
         };
 
         struct Avl_h {
-            typedef std::integral_constant<int, 1> base_trait;
-
-            typedef std::integral_constant<int, 2> avl_trait;
+            typedef AVLTrait metadata_trait;
             int avl_h = 1;
 
             static Avl_h AfterLeaf() { return Avl_h{0}; }
@@ -37,9 +40,7 @@ namespace hwt {
         };
 
         struct Size {
-            typedef std::integral_constant<int, 1> base_trait;
-
-            typedef std::integral_constant<int, 2> size_trait;
+            typedef SizeTrait metadata_trait;
             int subtree_size = 1;
 
             static Size AfterLeaf() { return Size{0}; }
@@ -50,12 +51,8 @@ namespace hwt {
         };
 
         struct Full {
-            typedef std::integral_constant<int, 1> base_trait;
-
-            typedef std::integral_constant<int, 2> avl_trait;
+            typedef AVLSizeTrait metadata_trait;
             int avl_h = 1;
-
-            typedef std::integral_constant<int, 3> size_trait;
             int subtree_size = 1;
 
             static Full AfterLeaf() { return Full{0, 0}; }
