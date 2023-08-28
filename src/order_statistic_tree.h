@@ -37,6 +37,10 @@ namespace hwt {
     public:
         using TreeType<MT>::insert;
 
+        int range_find(const int l, const int r) override {
+            return rank(r) - rank(l);
+        }
+
         optional<int> select(int k) const {
             if (k < 1 || k > nodes.size())
                 return nullopt;
