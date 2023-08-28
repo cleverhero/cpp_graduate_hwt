@@ -98,7 +98,7 @@ namespace hwt
 
             nodes[root_id.value()]->left_id = left.head;
             nodes[root_id.value()]->right_id = right.head;
-            this->update_node(root_id.value());
+            update_node(root_id.value());
         }
 
 

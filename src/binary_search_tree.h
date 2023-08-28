@@ -69,7 +69,7 @@ namespace hwt {
         }
 
         BST& operator=(BST&& rhs) noexcept {
-            this->nodes.swap(rhs.nodes);
+            nodes.swap(rhs.nodes);
 
             id = rhs.id;
             root_id = rhs.root_id;
@@ -81,15 +81,15 @@ namespace hwt {
         int nodes_count() { return nodes.size(); }
 
         virtual bool find(const int key) {
-            if (!this->root_id)
+            if (!root_id)
                 return false;
 
-            auto curr_node_id = this->root_id;
+            auto curr_node_id = root_id;
             while (curr_node_id) {
-                if (key > this->nodes[curr_node_id.value()]->key)
-                    curr_node_id = this->get_right_id(curr_node_id.value());
-                else if (key < this->nodes[curr_node_id.value()]->key)
-                    curr_node_id = this->get_left_id(curr_node_id.value());
+                if (key > nodes[curr_node_id.value()]->key)
+                    curr_node_id = get_right_id(curr_node_id.value());
+                else if (key < nodes[curr_node_id.value()]->key)
+                    curr_node_id = get_left_id(curr_node_id.value());
                 else
                     return true;
             }
