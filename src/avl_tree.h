@@ -1,15 +1,7 @@
 #pragma once
 
-#include <optional>
-#include <memory>
-#include <vector>
-
 #include "nodes.h"
 #include "binary_search_tree.h"
-
-using std::vector;
-using std::unique_ptr, std::make_unique;
-using std::optional, std::nullopt;
 
 
 namespace hwt {
