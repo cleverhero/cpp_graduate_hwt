@@ -11,21 +11,21 @@ namespace hwt {
     using id_opt_t = optional<id_t>;
 
     namespace metadata {
-        /// В данном неймспейсе введены базовые типы метаданных.
-        /// Предполагается, что можно создавать дополнительные типы метаданных в зависимости от прикладной задачи.
-        ///
-        /// Так как структура метаданных должна быть очень легковесной, то было решено отказаться от наследования,
-        /// а вместо этого, чтобы была возможность сообщать пользователю, что он не может в конкретном случае выбрать неправильный тип метаданных
-        /// (например не может в AVL дереве использовать тип метаданных, который не содержит информацию о высоте поддерева)
-        /// была введена система "трейтов".
-        ///
-        /// Так, трейт указывающий, что тип может использоваться как метадата для базового BinarySearchTree -- BaseTrait
-        /// Для SplayTree -- так же достаточно BaseTrait
-        /// Для AVLTree дерева -- AVLTrait, потомок BaseTrait
-        /// Если необходима специфичная структура OrderStatisticTree на SplayTree, то достаточно SizeTrait,
-        /// что позволяет минимизировать размер структуры для метаданных.
-        ///
-        /// Примеры можно найти в test/base_tests/templates_test.cpp
+        /// The basic types of metadata are introduced in this namespace.
+        /// Supposed that custom metadata types can be created depending on the application task.
+
+        /// The metadata structure should be very lightweight, so was decided to abandon inheritance.
+        /// In order to be able to inform the user that he cannot choose the wrong type of metadata in a particular case 
+        /// (for example, he cannot use a metadata type in an AVL tree that does not contain information about the height of the subtree),
+        /// was introduced a "traits" system.
+
+        /// So, a trait indicating that the type can be used as metadata for the base BinarySearchTree -- BaseTrait
+        /// For Splay Tree -- BaseTrait is also enough
+        /// For AVLTree tree -- AVLTrait, descendant of BaseTrait
+        /// If a specific OrderStatisticTree structure built on SplayTree is needed, 
+        /// then SizeTrait is sufficient, which minimizes the size of the tructure for metadata.
+
+        /// Examples can be found in test/base_tests/templates_test.cpp
 
         struct BaseTrait {};
         struct AVLTrait: BaseTrait {};
