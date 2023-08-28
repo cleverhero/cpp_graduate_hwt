@@ -11,7 +11,7 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(benchmarks)
 
-add_executable(order_statictic src/order_statictic.cpp)
+add_executable(order_statictic src/order_statistic.cpp)
 target_link_libraries(order_statictic hwt_lib)
 
 add_executable(range_find src/range_find.cpp)
