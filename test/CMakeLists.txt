@@ -15,7 +15,8 @@ set(CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
 
 set(base_tests base_tests)
-set(ost_tests order_statistic_tree_tests)
+set(os_tests order_statistic_tests)
+set(rf_tests range_find_tests)
 
 add_library(GTest::GTest INTERFACE IMPORTED)
 target_link_libraries(GTest::GTest INTERFACE gtest_main)
@@ -32,17 +33,28 @@ add_executable(templates_test ${base_tests}/templates_test.cpp)
 target_include_directories(templates_test PUBLIC ${HEADERS_DIR})
 target_link_libraries(templates_test PRIVATE GTest::GTest hwt_lib)
 
-add_executable(easy_test ${ost_tests}/easy_test.cpp)
-target_include_directories(easy_test PUBLIC ${HEADERS_DIR})
-target_link_libraries(easy_test PRIVATE GTest::GTest hwt_lib)
+add_executable(os_functional_test ${os_tests}/functional_test.cpp)
+target_include_directories(os_functional_test PUBLIC ${HEADERS_DIR})
+target_link_libraries(os_functional_test PRIVATE GTest::GTest hwt_lib)
 
-add_executable(big_test ${ost_tests}/big_gen_test.cpp)
-target_include_directories(big_test PUBLIC ${CONFIG_DIR} ${HEADERS_DIR})
-target_link_libraries(big_test PRIVATE GTest::GTest hwt_lib)
+add_executable(os_load_test ${os_tests}/load_test.cpp)
+target_include_directories(os_load_test PUBLIC ${CONFIG_DIR} ${HEADERS_DIR})
+target_link_libraries(os_load_test PRIVATE GTest::GTest hwt_lib)
+
+add_executable(rf_functional_test ${rf_tests}/functional_test.cpp)
+target_include_directories(rf_functional_test PUBLIC ${HEADERS_DIR})
+target_link_libraries(rf_functional_test PRIVATE GTest::GTest hwt_lib)
+
+add_executable(rf_load_test ${rf_tests}/load_test.cpp)
+target_include_directories(rf_load_test PUBLIC ${CONFIG_DIR} ${HEADERS_DIR})
+target_link_libraries(rf_load_test PRIVATE GTest::GTest hwt_lib)
 
 add_test(ml_test ml_test)
 add_test(es_test es_test)
 add_test(templates_test templates_test)
 
-add_test(easy_test easy_test)
-add_test(big_test big_test)
+add_test(os_functional_test os_functional_test)
+add_test(os_load_test os_load_test)
+
+add_test(rf_functional_test rf_functional_test)
+add_test(rf_load_test rf_load_test)
